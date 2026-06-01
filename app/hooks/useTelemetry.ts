@@ -6,7 +6,7 @@ import {
   addLog,
   setConnectionStatus,
   updateMetrics,
-} from "../features/telemetrySlice";
+} from "../features/telemetrySlice"; 
 
 export const useTelemetry = (url: string = "ws://localhost:5000") => {
   const dispatch = useDispatch();
@@ -26,9 +26,9 @@ export const useTelemetry = (url: string = "ws://localhost:5000") => {
         let parsed = JSON.parse(event.data);
         let { type, data } = parsed;
 
-        if (type == "metrics") {
+        if (type === "metrics") {
           dispatch(updateMetrics(data));
-        } else if (type == "logs") {
+        } else if (type === "logs") {
           dispatch(addLog(data));
         }
       } catch (error) {
