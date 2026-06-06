@@ -3,53 +3,82 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
-  addLog,
   setConnectionStatus,
-  updateMetrics,
-} from "../features/telemetrySlice"; 
+  hydrateHistory,
+  updateLiveMetrics,
+  updateLogs,
+  updateAiDiagnosis,
+} from "../features/telemetrySlice";
 
-export const useTelemetry = (url: string = "ws://localhost:5000") => {
+// 📡 Server-side proxy target handles the HTTP -> HTTPS upgrade automatically
+const HTTP_PROXY_URL = process.env.NEXT_PUBLIC_PULSEOPS_API_URL + "/analytics/history";
+
+// WebSockets cannot be proxied via standard Next.js HTTP rewrites,
+// so we connect directly to the public EC2 socket gateway using the native ws protocol
+const WS_URL = "ws://56.228.31.230:5000";
+
+export const useTelemetry = (url: string = WS_URL) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const ws = new WebSocket(url);
-
-    //On connection successfull
-    ws.onopen = () => {
-      console.log("Telemetry Simulator is connected!");
-      dispatch(setConnectionStatus(true));
-    };
-
-    //On server sends data
-    ws.onmessage = (event) => {
+    // 🚰 PHASE 1: HTTP Baseline History Hydration via Secure Proxy Route
+    const hydrateDashboardBaseline = async () => {
       try {
-        let parsed = JSON.parse(event.data);
-        let { type, data } = parsed;
-
-        if (type === "metrics") {
-          dispatch(updateMetrics(data));
-        } else if (type === "logs") {
-          dispatch(addLog(data));
+        const response = await fetch(HTTP_PROXY_URL);
+        const json = await response.json();
+        
+        if (json.success && Array.isArray(json.data)) {
+          console.log(`📊 Hydrated dashboard with ${json.count} baseline metrics.`);
+          dispatch(hydrateHistory(json.data));
         }
       } catch (error) {
-        console.log("Error parsing the WebSocket frames!");
+        console.error("❌ Failed to pull historical baseline telemetry via proxy:", error);
       }
     };
 
-    //-----------Handle error/close of connection-----------
+    hydrateDashboardBaseline();
+
+    // ⚡ PHASE 2: Live WebSocket Continuous Stream Append
+    const ws = new WebSocket(url);
+
+    ws.onopen = () => {
+      console.log("🚀 Connected to Live PulseOps Production Cloud Pipeline Server!");
+      dispatch(setConnectionStatus(true));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const parsed = JSON.parse(event.data);
+        const { type, data } = parsed;
+
+        switch (type) {
+          case "metrics":
+            dispatch(updateLiveMetrics(data));
+            break;
+          case "logs":
+            dispatch(updateLogs(data));
+            break;
+          case "ai-diagnosis":
+            dispatch(updateAiDiagnosis(data));
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        console.error("⚠️ Error parsing incoming live telemetry WebSocket frame:", error);
+      }
+    };
+
     ws.onerror = (err) => {
-      console.log("Error occurred in WebSocket Pipeline:", err);
+      console.error("❌ Exception isolated inside active WebSocket channel:", err);
       dispatch(setConnectionStatus(false));
     };
 
     ws.onclose = () => {
-      console.log("Closed WebSocket connection!");
+      console.warn("⚠️ WebSocket connection dropped from target PulseOps stream infrastructure.");
       dispatch(setConnectionStatus(false));
     };
 
-    // 🧹 ANTI-MEMORY LEAK CLEANUP:
-    // If the developer navigates away or refreshes, forcefully shut down the socket link
-    // to prevent duplicate ghost connections hanging around in browser memory.
     return () => {
       ws.close();
     };
