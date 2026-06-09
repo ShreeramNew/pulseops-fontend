@@ -11,108 +11,102 @@ import ErrorGaugeCard from "./components/ErrorGaugeCard";
 import AiDiagnosisBanner from "./components/AiDiagnosisBanner";
 import LogStream from "./components/LogStream";
 import HistoryGraph from "./components/HistoryGraph";
-
-// New control and tracking panels:
 import RouteLatencyList from "./components/RouteLatencyList";
-import TimeRangeSelector from "./components/TimeRangeSelector";
-import ResetClusterButton from "./components/ResetClusterButton";
 
 export default function DashboardHome(): React.JSX.Element {
-  // Execute the telemetry hook without arguments to use the cloud ws fallback automatically
+  // Establish native WebSocket ingestion channel connectivity loops
   useTelemetry();
 
-  console.log("🏗️ Main Dashboard Layout Shell Rendered");
+  console.log("🏗️ High-Density Responsive Layout Shell Rendered");
 
   return (
-    <main className="min-h-screen bg-slate-950 p-4 md:p-8 text-slate-100 max-w-7xl mx-auto space-y-6 selection:bg-cyan-500/30">
-      
-      {/* 🔝 GLOBAL HEADER SYSTEM */}
-      <header className="border-b border-slate-900/80 pb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 bg-clip-text text-transparent">
-            PulseOps Core
-          </h1>
-          <p className="text-xs text-slate-500 font-mono mt-1">
-            Production Cluster Tracking • Live Ingestion Channel
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30">
+      <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8 space-y-6">
         
-        {/* Interactive Action Header Elements */}
-        <div className="flex items-center gap-3">
-          <ResetClusterButton />
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 font-mono text-[11px]">
+        {/* 🔝 1. GLOBAL PLATFORM HEADER */}
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-900 pb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 bg-clip-text text-transparent">
+                PulseOps Core
+              </h1>
+              <span className="hidden sm:inline-flex items-center rounded bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400 border border-cyan-500/20 font-mono">
+                v2.1.0
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-mono">
+              Production Cluster Telemetry Stream Node Active
+            </p>
+          </div>
+          
+          {/* Edge Connection Badge Anchor */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800/80 font-mono text-[11px] backdrop-blur-sm self-stretch sm:self-auto justify-center">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-slate-400">Stream Node Active</span>
+            <span className="text-slate-400">Ingestion Channel Active</span>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* 🧠 DIAGNOSTICS: GENI AI SYSTEM LOG TRIAGE */}
-      <AiDiagnosisBanner />
-
-      {/* 🎛️ INFRASTRUCTURE: HOST NODE VITAL SIGNS (HARDWARE METRICS) */}
-      <div className="space-y-2">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
-          Host Node Vital Signs
-        </h2>
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <CpuCard />
-          <MemoryCard />
-          <UptimeCard />
-        </section>
-      </div>
-
-      {/* 🚀 APPLICATION: APM PERFORMANCE OBSERVABILITY (SOFTWARE METRICS) */}
-      <div className="space-y-2">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
-          Application Performance Monitoring (APM)
-        </h2>
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <TrafficCard />
-          <LatencyCard />
-          <ErrorGaugeCard />
-        </section>
-      </div>
-
-      {/* 📊 ANALYTICS: ASYMMETRIC CONTROL GRID VIEWPORTS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column Span: Historical Chart Ecosystem */}
-        <div className="lg:col-span-2 space-y-2">
-          <div className="flex justify-between items-center px-1">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 font-mono">
-              Metrics Time Series History
-            </h2>
-            <TimeRangeSelector />
-          </div>
-          <div className="bg-slate-900/20 border border-slate-900 rounded-xl p-1 h-full">
-            <HistoryGraph />
-          </div>
+        {/* 🧠 2. INTELLIGENCE SUITE: GENI AI LOG TRIAGE DIAGNOSTICS */}
+        <div className="w-full">
+          <AiDiagnosisBanner />
         </div>
 
-        {/* Right Column Span: Granular Route Micro-Vitals */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
-            Route Observability
+        {/* 🎛️ 3. HARDWARE & APM METRICS MATRIX BLOCK */}
+        <div className="space-y-3">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
+            Cluster Metrics Grid
           </h2>
-          <RouteLatencyList />
+          
+          {/* Responsive 1-2-3 Grid Engine */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CpuCard />
+            <MemoryCard />
+            <TrafficCard />
+            <LatencyCard />
+            <ErrorGaugeCard />
+            <UptimeCard />
+          </section>
         </div>
 
-      </div>
+        {/* 📊 4. ANALYTICS OBSERVABILITY GRID WORKSPACE */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          
+          {/* Left Column Layout: Historical Analytics Timeline */}
+          <div className="lg:col-span-2 flex flex-col space-y-3 h-full">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
+              Time Series Analytics (Rolling 24H)
+            </h2>
+            <div className="flex-1 bg-slate-900/10 border border-slate-900 rounded-xl p-2 min-h-[340px] flex flex-col justify-center">
+              <HistoryGraph />
+            </div>
+          </div>
 
-      {/* 📋 LOGS: RAW STREAM LOGGER RUNTIME FIELD */}
-      <div className="space-y-2 pt-4">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
-          Standard Output Log Feed
-        </h2>
-        <section className="bg-slate-900/20 border border-slate-900 rounded-xl p-1">
-          <LogStream />
-        </section>
+          {/* Right Column Layout: Active Ingestion Paths */}
+          <div className="flex flex-col space-y-3 h-full">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
+              Endpoint Distribution Matrix
+            </h2>
+            <div className="flex-1 h-full">
+              <RouteLatencyList />
+            </div>
+          </div>
+
+        </div>
+
+        {/* 📋 5. LIVE RUNTIME CONSOLE DATA FEED */}
+        <div className="space-y-3 pt-2">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono pl-1">
+            System Event Output Stream (Standard Output)
+          </h2>
+          <section className="bg-slate-900/10 border border-slate-900 rounded-xl p-1 overflow-hidden">
+            <LogStream />
+          </section>
+        </div>
+        
       </div>
-      
-    </main>
+    </div>
   );
 }

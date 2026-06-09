@@ -8,10 +8,12 @@ import {
   updateLiveMetrics,
   updateLogs,
   updateAiDiagnosis,
+  HistoricalMetric, // Added type assignment safety checks
+  SystemMetrics
 } from "../features/telemetrySlice";
 
 // 📡 Server-side proxy target handles the HTTP -> HTTPS upgrade automatically
-const HTTP_PROXY_URL = process.env.NEXT_PUBLIC_PULSEOPS_API_URL + "/analytics/history";
+const HTTP_PROXY_URL = (process.env.NEXT_PUBLIC_PULSEOPS_API_URL || "") + "/analytics/history";
 
 // WebSockets cannot be proxied via standard Next.js HTTP rewrites,
 // so we connect directly to the public EC2 socket gateway using the native ws protocol
@@ -29,7 +31,7 @@ export const useTelemetry = (url: string = WS_URL) => {
         
         if (json.success && Array.isArray(json.data)) {
           console.log(`📊 Hydrated dashboard with ${json.count} baseline metrics.`);
-          dispatch(hydrateHistory(json.data));
+          dispatch(hydrateHistory(json.data as HistoricalMetric[]));
         }
       } catch (error) {
         console.error("❌ Failed to pull historical baseline telemetry via proxy:", error);
@@ -54,7 +56,7 @@ export const useTelemetry = (url: string = WS_URL) => {
         switch (type) {
           case "metrics":
             // ✅ Automatically routes the expanded object straight to our updated reducer
-            dispatch(updateLiveMetrics(data));
+            dispatch(updateLiveMetrics(data as SystemMetrics));
             break;
           case "logs":
             dispatch(updateLogs(data));

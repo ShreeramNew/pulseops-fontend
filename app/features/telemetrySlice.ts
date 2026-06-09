@@ -1,13 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// 🔥 1. Structure definition for individual dynamic route logs
+export interface RouteProfile {
+  method: string;
+  path: string;
+  hits: number;
+  latencyMs: number;
+}
+
 // Layout matching our continuous database structure for line-charts
 export interface HistoricalMetric {
   cpuUsagePercentage: number;
   memoryUsageMB: number;
-  // 🔥 New persistent chart data bindings:
   totalRequests: number;
   avgLatencyMs: number;
   errorRatePercentage: number;
+  routes: RouteProfile[]; // 🔥 Added: Keeps route maps attached to past points
   timestamp: string;
 }
 
@@ -16,10 +24,10 @@ export interface SystemMetrics {
   cpuUsagePercentage: number;
   memoryUsageMB: number;
   uptimeSeconds: number;
-  // 🔥 New live indicators:
   totalRequests: number;
   avgLatencyMs: number;
   errorRatePercentage: number;
+  routes: RouteProfile[]; // Keeps live metrics aligned
 }
 
 interface TelemetryState {
@@ -57,16 +65,14 @@ const telemetrySlice = createSlice({
       const newPoint: HistoricalMetric = {
         cpuUsagePercentage: action.payload.cpuUsagePercentage,
         memoryUsageMB: action.payload.memoryUsageMB,
-        // ✅ Map the new APM data points directly to the chart array frame
         totalRequests: action.payload.totalRequests,
         avgLatencyMs: action.payload.avgLatencyMs,
         errorRatePercentage: action.payload.errorRatePercentage,
+        routes: action.payload.routes || [], // ✅ Appends real real-time route mappings to history tracking frame
         timestamp: new Date().toISOString(),
       };
 
       // 🛡️ ANTI-MEMORY LEAK GUARDRAIL (FIFO):
-      // Keep state bounded to max ~900 indices (approx 45 mins of high-res 3s tracking)
-      // to guarantee pixel-perfect continuous graphing without bogging down browser layout cycles.
       const updatedHistory = [...state.history, newPoint];
       if (updatedHistory.length > 900) {
         state.history = updatedHistory.slice(1);

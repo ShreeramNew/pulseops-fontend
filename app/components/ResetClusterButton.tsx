@@ -11,7 +11,11 @@ export default function ResetClusterButton(): React.JSX.Element {
     
     setIsResetting(true);
     try {
-      const res = await fetch((process.env.NEXT_PUBLIC_PULSEOPS_API_URL || "") + "/metrics/reset", {
+      // 🛡️ Ensure environment URLs clean up trailing slash formatting mismatches
+      const baseApiUrl = process.env.NEXT_PUBLIC_PULSEOPS_API_URL || "http://localhost:3000/api";
+      const cleanUrl = `${baseApiUrl}/metrics/reset`.replace(/([^:]\/)\/+/g, "$1");
+
+      const res = await fetch(cleanUrl, {
         method: "POST"
       });
       const data = await res.json();
