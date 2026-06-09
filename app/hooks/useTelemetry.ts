@@ -17,7 +17,8 @@ const HTTP_PROXY_URL = (process.env.NEXT_PUBLIC_PULSEOPS_API_URL || "") + "/anal
 
 // WebSockets cannot be proxied via standard Next.js HTTP rewrites,
 // so we connect directly to the public EC2 socket gateway using the native ws protocol
-const WS_URL = "ws://56.228.31.230:5000";
+// const WS_URL = "ws://56.228.31.230:5000";
+const WS_URL = "wss://pulseops.theworkpc.com";
 
 export const useTelemetry = (url: string = WS_URL) => {
   const dispatch = useDispatch();
