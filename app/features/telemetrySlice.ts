@@ -4,6 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface HistoricalMetric {
   cpuUsagePercentage: number;
   memoryUsageMB: number;
+  // 🔥 New persistent chart data bindings:
+  totalRequests: number;
+  avgLatencyMs: number;
+  errorRatePercentage: number;
   timestamp: string;
 }
 
@@ -12,6 +16,10 @@ export interface SystemMetrics {
   cpuUsagePercentage: number;
   memoryUsageMB: number;
   uptimeSeconds: number;
+  // 🔥 New live indicators:
+  totalRequests: number;
+  avgLatencyMs: number;
+  errorRatePercentage: number;
 }
 
 interface TelemetryState {
@@ -45,10 +53,14 @@ const telemetrySlice = createSlice({
     updateLiveMetrics: (state, action: PayloadAction<SystemMetrics>) => {
       state.metrics = action.payload;
 
-      // Synchronize dynamic graph arrays by appending the live metric frame
+      // Synchronize dynamic graph arrays by appending the complete live metric frame
       const newPoint: HistoricalMetric = {
         cpuUsagePercentage: action.payload.cpuUsagePercentage,
         memoryUsageMB: action.payload.memoryUsageMB,
+        // ✅ Map the new APM data points directly to the chart array frame
+        totalRequests: action.payload.totalRequests,
+        avgLatencyMs: action.payload.avgLatencyMs,
+        errorRatePercentage: action.payload.errorRatePercentage,
         timestamp: new Date().toISOString(),
       };
 

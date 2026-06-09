@@ -53,6 +53,7 @@ export const useTelemetry = (url: string = WS_URL) => {
 
         switch (type) {
           case "metrics":
+            // ✅ Automatically routes the expanded object straight to our updated reducer
             dispatch(updateLiveMetrics(data));
             break;
           case "logs":
