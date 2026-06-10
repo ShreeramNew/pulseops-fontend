@@ -13,9 +13,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// 📌 Updated metadata with standard public favicon file mappings
 export const metadata: Metadata = {
   title: "PulseOps Telemetry Dashboard",
   description: "Real-time system monitoring panel",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" }, // Default fallback icon
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
