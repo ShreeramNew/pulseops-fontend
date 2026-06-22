@@ -43,7 +43,7 @@ export default function RouteLatencyList(): React.JSX.Element {
           ) : (
             /* Live Population Matrix Mapping Real Inputs */
             <div className="space-y-2 overflow-y-auto max-h-[260px] pr-1 scrollbar-thin scrollbar-thumb-slate-900 scrollbar-track-transparent">
-              {sortedRoutes.map((route, index) => (
+              {sortedRoutes.filter((route)=>route.path.includes("/api")).map((route, index) => (
                 <div 
                   key={`${route.method}-${route.path}-${index}`} 
                   onClick={() => setSelectedRoute(route)}
